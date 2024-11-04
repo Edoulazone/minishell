@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 14:35:17 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/10/17 19:18:23 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/04 16:55:58 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,21 +69,4 @@ char	*ft_ssearch(char *str, int c, int flag)
 	if (c == '\0')
 		return (&str[i]);
 	return (NULL);
-}
-
-void	*ft_bzero(void *str, size_t tot_elem)
-{
-	while (tot_elem--)
-		*(char *)str++ = '\0';
-}
-
-void	*ft_calloc(size_t num_elem, size_t size)
-{
-	void	*mem;
-
-	mem = malloc(num_elem * size);
-	if (!mem)
-		return (0);
-	ft_bzero(mem, num_elem * size);
-	return (mem);
 }

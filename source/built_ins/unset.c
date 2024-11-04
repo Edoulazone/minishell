@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 17:59:51 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/14 15:30:07 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/10/21 17:36:58 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 //checks if 'check' is similar to env_str up untill the char c in env_str
 // return (0) means it's found ! just like strcmp, 1 is not found
+// FINALEMENT ELLE SERA INUTILE CETTE FONCTION
 int	special_strcmp(char *env_str, char *check, char c)
 {
 	int	i;
@@ -33,50 +34,50 @@ int	special_strcmp(char *env_str, char *check, char c)
 }
 
 //legerement redondante puisqu'elle doit re-checker special_strcmp
-void	remove_env_node(t_list **head, char *check, t_list **first)
+void	remove_env_node(t_env **head, char *check, t_env **first)
 {
-	t_list	*before_cut;
-	t_list	*remove;
+	t_env	*before_cut;
+	t_env	*remove;
 
 	before_cut = *head;
-	if (special_strcmp((*head)->content, check, '=') == 0)
+	if (ft_strcmp((*head)->value, check) == 0)
 	{
-		write(1, "argument is head's content !\n", 29);
-		free((*head)->content);
+		write(1, "argument is head's value !\n", 29);
+		free((*head)->value);
+		if ((*head)->content)
+			free((*head)->content);
 		(*head) = (*head)->next;
 		*first = *head;
 		return ;
 	}
 	(void)first;
-	while (special_strcmp(before_cut->next->content, check, '=') != 0)
+	while (ft_strcmp(before_cut->next->value, check) != 0)
 		before_cut = before_cut->next;
 	remove = before_cut->next;
-	free((remove->content));
+	free((remove->value));
+	if (remove->content)
+		free(remove->content);
 	before_cut->next = remove->next;
 	free(remove);
 	write(1, "now it should have been removed !\n", 34);
 }
 
-//ce sera sans doute pas un void, pr retourner 1 ou 0 pr succes/failure
-void	ft_unset(t_ast_command *cmd, t_list **env)
+int	ft_unset(t_ast *cmd, t_env **env)
 {
-	t_list	*first;
-	t_list	*current;
+	t_env	*first;
+	t_env	*current;
 	char	**args;
 	int		i;
 
 	first = *env;
-	args = cmd->args;
+	args = cmd->value;
 	if (!(args[1]))
-	{
-		write(1, "no arguments for unset !\n", 25);
-		return ;
-	}
+		return(write(1, "no arguments for unset !\n", 25), 1); //1 means failure, for now
 	i = 1;
 	current = *env;
 	while (args[i])
 	{
-		if (special_strcmp((char *)(current->content), args[i], '=') == 0)
+		if (ft_strcmp((current->value), args[i]) == 0)
 		{
 			write(1, "PATH FOUND\n", 11);
 			remove_env_node(env, args[i], &first);
@@ -91,4 +92,5 @@ void	ft_unset(t_ast_command *cmd, t_list **env)
 			break;
 		}
 	}
+	return (0);
 }

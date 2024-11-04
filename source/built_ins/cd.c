@@ -6,15 +6,14 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 14:28:41 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/15 18:33:23 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/10/21 17:35:27 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "../../../includes/minishell.h"
 
-//p-e pas void, sans doute prendre t_shell *sh a la place de t_list
-void	ft_cd(t_ast *cmd, t_list *env)
+//changer tous les t_list en t_env
+void	ft_cd(t_ast *cmd, t_env *env)
 {
 	//int		i;
 	char	*path;
