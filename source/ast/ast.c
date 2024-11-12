@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:05 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/10/28 14:41:47 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/12 15:50:37 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	**get_command(t_token *token)
 		return (NULL);
 	while (token && is_command(token->t_type) == 0)
 	{
-		command[++i] = ft_strdup(token->str);
+		command[++i] = ft_strdup(token->content);
 		token = token->next;
 	}
 	command[i] = NULL;
@@ -68,7 +68,7 @@ t_ast	*make_ast(t_token *tokens)
 		current = current->next;
 	if (current && is_command(current->t_type) == 1 && current->t_type != PIPE
 		&& current->t_type != HEREDOC)
-		return (build_left_pipe(tokens)); // fonction à faire
+		return (pipe_left(tokens)); // fonction à faire
 	current = tokens;
 	if (is_command(current->t_type) == 0)
 	{

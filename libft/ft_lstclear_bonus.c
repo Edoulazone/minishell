@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 15:20:40 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/04/18 15:48:20 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/12 15:56:58 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	ft_lstclear(t_token *lst, void (*del)(void *))
 {
-	t_list	*ptr1;
-	t_list	*ptr2;
+	t_token	*ptr1;
+	t_token	*ptr2;
 
-	if (!lst || !del || !*lst)
+	if (!lst || !del || !lst)
 		return ;
-	ptr1 = *lst;
+	ptr1 = lst;
 	while (ptr1 != NULL)
 	{
 		ptr2 = ptr1->next;
@@ -27,5 +27,5 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 		free(ptr1);
 		ptr1 = ptr2;
 	}
-	*lst = NULL;
+	lst = NULL;
 }

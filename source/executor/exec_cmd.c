@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 14:45:40 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/31 13:54:26 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/05 16:40:08 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,8 @@ int execute_command(t_ast *cmd, t_env *env, t_shell *sh)
 {
     char    **env_array;
 
-	//ca me parait bizarre qu'il ne faille pas gerer les stdin et stdout
-	//mais Quentin dit que cest géré dans les autres nodes (pipes, redirections)
     add_path(cmd, env);
+    (void)sh;
     env_array = env_to_array(env);
     fill_env_array(env_array, env);
 	if (-1 == execve(cmd->value[0], cmd->value, env_array))
@@ -57,4 +56,17 @@ int execute_command(t_ast *cmd, t_env *env, t_shell *sh)
 		exit(EXIT_FAILURE);
 	} //return status/value ???
     return (EXIT_FAILURE);
+}
+
+void    handle_cmd(t_ast *node, t_env **env, t_shell *sh)
+{
+    pid_t   pid;
+
+    pid = fork();
+    if (pid < 0)
+        exit(EXIT_FAILURE); // == problem with fork() !
+    else if (0 == pid)
+        execute_command(node, *env, sh);
+    else
+        waitpid(pid, &sh->return_value, 0); //wait for child to finish
 }

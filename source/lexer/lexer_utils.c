@@ -5,49 +5,53 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/09 10:29:57 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/10/17 16:08:54 by eschmitz         ###   ########.fr       */
+/*   Created: 2024/11/04 17:57:51 by eschmitz          #+#    #+#             */
+/*   Updated: 2024/11/12 15:54:10 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	pipe_type(char *str, int check)
+int	is_meta(char c, int *sqs, int *dqs)
 {
-	if (str[0] == '|')
-	{
-		if (ft_strlen(str) == 1)
-			return (1);
-	}
-	return (0);
-}
-
-int	input_heredoc_type(char *str, int check)
-{
-	if (str[0] == '<')
-	{
-		if (check == 1)
-			return (1 + input_type(&str[1]));
-		if (ft_strlen(str) == 1)
-			return (0);
-	}
-	return (0);
-}
-
-int	trunc_append_type(char *str, int check)
-{
-	if (str[0] == '>')
-	{
-		if (ft_strlen(str) == 1)
-			return (1 + trunc_type(&str[1]));
-	}
-	return (0);
-}
-
-int	is_delimiter(char c)
-{
-	if (c == ';' || c == '|' || c == '&' || c == '<' || c == '>'
-		|| c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r')
+	if (*sqs || *dqs)
+		return (0);
+	if (c == 32 || c == 9)
+		return (2);
+	if (c == '<' || c == '>' || c == '|')
 		return (1);
 	return (0);
+}
+
+void	check_qs(int sqs, int dqs, t_token *tokens)
+{
+	if (sqs || dqs)
+	{
+		ft_lstclear(tokens, &free);
+		ft_error("syntax error: quote not closed", 0, 0);
+	}
+}
+
+void	new_qs(char c, int *sqs, int *dqs)
+{
+	if (c == '\'')
+	{
+		if (!(*dqs))
+		{
+			if (!(*sqs))
+				*sqs = 1;
+			else
+				*sqs = 0;
+		}
+	}
+	if (c == '\"')
+	{
+		if (!(*sqs))
+		{
+			if (!(*dqs))
+				*dqs = 1;
+			else
+				*dqs = 0;
+		}
+	}
 }

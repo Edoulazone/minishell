@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:09:31 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/21 17:36:29 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/07 16:45:39 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,12 @@ int	length_untill_c(char *str, char c)
 
 char	*strdup_until_c(char *str, char c)
 {
-	int		equal;
 	int		len;
 	char	*result;
 
-	equal = 0;
 	len = length_untill_c(str, c);
 	if (str[len] == c) //sinon ya un probleme en vrai, pas de '=' dans un env...
-	{
-		equal = 1;
 		str[len] = '\0';
-	}
 	result = safe_strdup(str);
 	str[len] = c;
 	return (result);

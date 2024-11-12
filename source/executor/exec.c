@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 16:22:50 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/31 17:29:08 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/05 17:09:45 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 	IL Y AURA SANS DOUTE UN `RETURN VALUE` EN VARIABLE GLOBALE !
 */
 
+// sert à checker si la commande est built-in (ne necessite pas de fork etc.)
 int is_built_in(t_ast *cmd, t_env **env, t_shell *sh)
 {
     char **args;
@@ -38,82 +39,27 @@ int is_built_in(t_ast *cmd, t_env **env, t_shell *sh)
     return (0);
 }
 
-// faudra raccourcir la fonction en la découpant
-// je laisse comme ca pr la lisibilité
+// fonction principale de l'EXEC
+// recursion de la root jusqu'à ce que tout ai été exécuté
+// check le type de chaque node et délègue aux fonctions compétentes en réaction
 int execute_ast(t_ast *node, t_env **env, t_shell *sh)
 {
-	int		fd;
-    int     pipe_fd[2];
-    pid_t   pid;
-
     if (!node)
         return (EXIT_SUCCESS);
     if (node->n_type == CMD)
     {
         if (!(is_built_in(node, env, sh)))
-        {
-            pid = fork();
-            if (pid < 0)
-                exit(EXIT_FAILURE); // == problem with fork() !
-            else if (0 == pid)
-                execute_command(node, *env, sh);
-            else
-                waitpid(pid, &sh->return_value, 0); //wait for
-        }
+			handle_cmd(node, env, sh);
     }
     else if (node->n_type == PIPE)
     {
-        if (-1 == pipe(pipe_fd))
-        {
-            perror("pipe failed !"); //jsp si ca suffit
-            exit(EXIT_FAILURE); //p-e juste return (EXIT_FAILURE)
-        }
-        pid = fork();
-        if (pid < 0)
-			exit(EXIT_FAILURE); // == problem with fork() !
-		if (0 == pid) //handle left child
-		{
-			close(pipe_fd[0]);
-			dup2(pipe_fd[1], STDOUT_FILENO);
-			close(pipe_fd[1]);
-			execute_ast(node->left, env, sh);
-		}
-		else
-			waitpid(pid, &sh->return_value, 0);
-		pid = fork();
-		if (pid < 0)
-			exit(EXIT_FAILURE); // == problem with fork() !
-		if (0 == pid) //handle right child
-		{
-			close(pipe_fd[1]);
-			dup2(pipe_fd[0], STDIN_FILENO);
-			close(pipe_fd[0]);
-			execute_ast(node->right, env, sh);
-		}
-		else
-			waitpid(pid, &sh->return_value, 0);
-		close(pipe_fd[0]); // je sais pas si ils doivent
-		close(pipe_fd[1]); // etre ici ou dans ELSE
+        handle_pipe(node, env, sh);
     }
 	else if (node->n_type == INPUT)
-	{
-		fd = open(node->value[0], O_RDONLY);
-		if (fd < 0)
-			return (perror("open failed !"), EXIT_FAILURE);
-		pid = fork();
-		if (pid < 0)
-			exit(EXIT_FAILURE); // == problem with fork() !
-		if (0 == pid)
-		{
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-			execute_ast(node->left, env, sh); // p-e que ce sera right-child
-		}
-		else
-		{
-			close(fd); //close file descriptor dans le parent process
-			waitpid(pid, &sh->exit_status, 0);
-		}
-	}
-	
+		handle_input(node, env, sh);
+	else if (node->n_type == TRUNC || node->n_type == APPEND)
+		handle_trunc_append(node, env, sh);
+	else if (node->n_type == HEREDOC)
+		handle_heredoc(node, env, sh);
+	return (0);
 }

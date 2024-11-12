@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 16:14:51 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/10/08 18:40:52 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/12 18:09:53 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,16 @@ int	verif_token(t_shell *sh)
 	t_token	*temp;
 
 	verif = 0;
+	while (sh->token)
+	{
+		printf("%s\n", sh->token->content);
+		sh->token = sh->token->next;
+	}
 	temp = sh->token;
+	printf("Nice\n");
 	if (temp->t_type == PIPE && temp->next == NULL)
 		return (ft_error(SYNTAX_ERROR, '|', 1));
+	printf("Nice\n");
 	while (temp != NULL)
 	{
 		if (temp->t_type == TRUNC || temp->t_type == INPUT

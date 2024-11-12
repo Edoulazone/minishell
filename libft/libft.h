@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:32:51 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/09/26 18:30:49 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/12 18:02:50 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,18 @@
 typedef struct s_list
 {
 	void			*content;
+	int				type;
 	struct s_list	*next;
 }					t_list;
+
+//Token structure
+typedef struct s_token
+{
+	char			*content;
+	int				t_type;
+	struct s_token	*prev;
+	struct s_token	*next;
+}	t_token;
 
 typedef struct s_getal
 {
@@ -77,14 +87,13 @@ void		ft_putendl_fd(char *s, int fd);
 void		ft_putnbr_fd(int n, int fd);
 
 // PROTOTYPES BONUS
-t_list		*ft_lstnew(void *content);
+t_token		*ft_lstnew(void *content, int type);
 void		ft_lstadd_front(t_list **lst, t_list *new);
 int			ft_lstsize(t_list *lst);
-t_list		*ft_lstlast(t_list *lst);
-void		ft_lstadd_back(t_list **lst, t_list *new);
+t_token		*ft_lstlast(t_token *lst);
+void		ft_lstadd_back(t_token *lst, t_token *new);
 void		ft_lstdelone(t_list *lst, void (*del)(void *));
-void		ft_lstclear(t_list **lst, void (*del)(void *));
+void		ft_lstclear(t_token *lst, void (*del)(void *));
 void		ft_lstiter(t_list *lst, void (*f)(void *));
-t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 #endif

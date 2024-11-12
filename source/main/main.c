@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:54:50 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/10/25 14:44:56 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/12 15:17:49 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,13 @@ void	minilaunch(t_shell *sh)
 	int	verif;
 
 	verif = 0;
-	verif = lex(sh, sh->command);
+	verif = lex(sh);
 	if (verif == 0)
 	{
 		verif = parsing(sh);
 		if (verif == 0)
 		{
-			verif = execute_heredoc(sh, sh->ast);
-			if (verif == 0)
-				execute(sh, sh->ast);
+			execute_ast(sh->ast, &sh->env, sh);
 			// free_ast(sh->ast);
 		}
 	}
@@ -37,12 +35,12 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_shell	sh;
 
-	(void)argc;
+	if (argc != 1)
+		return (ft_error("No argument is allowed\n", 0, 0));
 	(void)argv;
 	sh.env = NULL;
-	sh.str = NULL;
 	// checker();
-	make_env(&sh, envp);
+	sh.env = init_env_list(envp);
 	if (shell_init(&sh) == 0)
 	{
 		sh.loop = 0;
@@ -59,4 +57,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	// free_env(&sh);
 	// sh.env = NULL;
+	return (0);
 }

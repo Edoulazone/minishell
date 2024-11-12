@@ -6,9 +6,10 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:00:29 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/04 16:56:50 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/12 15:54:51 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -38,13 +39,14 @@
 
 /*Token types*/
 
+# define WORD		0
 # define INPUT		1	//"<"
 # define HEREDOC	2	//"<<"
 # define TRUNC		3	//">" //je l'appelerai plutot OUTPUT
 # define APPEND		4	//">>"
 # define PIPE		5	//"|"
 # define CMD		6	//"|"	??
-# define ARG		7	//"|"	??
+# define ARG		7	//"|"	?? ["ls", "-l", "-a", NULL]
 
 /*Exit defines*/
 
@@ -56,20 +58,20 @@
 //AST structure
 typedef struct s_ast
 {
-	char			**value;
+	char			**value;  //["ls", "-l", "-a", NULL]
 	int				n_type;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
 
-//Token structure
-typedef struct s_token
-{
-	char			*str;
-	int				t_type;
-	struct s_token	*prev;
-	struct s_token	*next;
-}	t_token;
+// //Token structure
+// typedef struct s_token
+// {
+// 	char			*content;
+// 	int				t_type;
+// 	struct s_token	*prev;
+// 	struct s_token	*next;
+// }	t_token;
 
 //Environnement structure
 typedef struct s_env
@@ -86,11 +88,11 @@ typedef struct s_shell
 	int		loop;
 	char	*str;
 	char	*command;
-	char	**commands;
+	t_list	**commands;
 	int		num_commands;
 	int		return_value;
 	char	*delimiter;
-	int		*exit_status; //jai changé en int*
+	int		exit_status; //jai changé en int*
 	t_env	*env;
 	t_token	*token;
 	t_ast	*ast;
@@ -129,11 +131,18 @@ void    add_path(t_ast *cmd, t_env *env);
 /*************************************
 *				LEXER                *
 *************************************/
+// lexer.c
+int		lex(t_shell *sh);
+
+// lexer_utils.c
+void	check_qs(int sqs, int dqs, t_token *tokens);
+void	new_qs(char c, int *sqs, int *dqs);
+int		is_meta(char c, int *sqs, int *dqs);
 
 /*************************************
 *				PARSER               *
 *************************************/
-//parsing.c
+// parsing.c
 int		parsing(t_shell *sh);
 int		is_command(int type);
 
@@ -147,6 +156,7 @@ char	**get_command(t_token *token);
 
 // ast_utils.c
 t_ast	*ast_priority(t_token *tokens, t_ast *origin);
+t_ast	*pipe_left(t_token *tokens);
 
 /*************************************
 *			   CHECKER               *
@@ -213,6 +223,21 @@ char	*safe_strjoin(char *s1, char *s2);
 //EXEC_CMD
 int 	execute_command(t_ast *cmd, t_env *env, t_shell *sh);
 void    add_path(t_ast *cmd, t_env *env);
+void    handle_cmd(t_ast *node, t_env **env, t_shell *sh);
+
+//EXEC_HEREDOC
+void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh);
+
+//EXEC_PIPE
+void	decoupage_left_pipe(int *pipe_fd, t_ast *node, t_env **env, t_shell *sh);
+void	decoupage_right_pipe(int *pipe_fd, t_ast *node, t_env **env, t_shell *sh);
+void    handle_pipe(t_ast *node, t_env **env, t_shell *sh);
+
+//EXEC_INPUT
+void    handle_input(t_ast *node, t_env **env, t_shell *sh);
+
+//EXEC_TRUNC_APPEND
+void    handle_trunc_append(t_ast *node, t_env **env, t_shell *sh);
 
 //EXEC
 int 	is_built_in(t_ast *cmd, t_env **env, t_shell *sh);

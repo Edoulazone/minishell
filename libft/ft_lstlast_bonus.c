@@ -3,23 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstlast_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 18:19:20 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/04/18 14:46:38 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/12 17:42:15 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstlast(t_list *lst)
+t_token	*ft_lstlast(t_token *lst)
 {
-	t_list	*ptr;
-
-	if (!lst)
-		return (NULL);
-	ptr = lst;
-	while (ptr->next != NULL)
-		ptr = ptr->next;
-	return (ptr);
+	if (lst)
+	{
+		while (lst->next)
+			lst = lst->next;
+		return (lst);
+	}
+	return (NULL);
 }

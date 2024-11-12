@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 17:59:51 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/21 17:36:58 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/07 16:46:42 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	remove_env_node(t_env **head, char *check, t_env **first)
 	before_cut = *head;
 	if (ft_strcmp((*head)->value, check) == 0)
 	{
-		write(1, "argument is head's value !\n", 29);
+		write(1, "argument is head's value !\n", 27);
 		free((*head)->value);
 		if ((*head)->content)
 			free((*head)->content);
