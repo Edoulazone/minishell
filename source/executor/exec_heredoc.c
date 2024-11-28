@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   exec_heredoc.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 17:54:02 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/11/04 18:37:50 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:52:31 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+/*
+	quand un node est '<<' ou nptq quelle autre redirection 
+	il faudra mettre EOF (ou le infile/outfile) dans le node->value (char **)
+	de la redirection, PAS dans son right child comme mnt, sinon le code ne marchera
+	pas pour des commandes tel que: `cat <<eof | cat`
+*/
 
 void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh)
 {
@@ -25,8 +32,8 @@ void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh)
     }
 	while (1)
 	{
-		line = readline("> ");
-		if (!line || ft_strcmp(node->value[0], line) == 0) //ca c'est si line == End Of File, spécifié dans value[0]
+		line = readline("heredoc> ");
+		if (!line || ft_strcmp(node->right->value[0], line) == 0)
 		{
 			free(line);
 			break;

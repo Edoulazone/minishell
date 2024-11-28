@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:54:50 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/12 15:17:49 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/28 14:04:35 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ void	minilaunch(t_shell *sh)
 	int	verif;
 
 	verif = 0;
-	verif = lex(sh);
+	verif = lex(sh->command, sh);
 	if (verif == 0)
 	{
 		verif = parsing(sh);
 		if (verif == 0)
 		{
 			execute_ast(sh->ast, &sh->env, sh);
-			// free_ast(sh->ast);
+			free_ast(sh->ast);
 		}
 	}
 }
@@ -33,26 +33,29 @@ void	minilaunch(t_shell *sh)
 //Loop dans le programme
 int	main(int argc, char **argv, char **envp)
 {
-	t_shell	sh;
+	t_shell	*sh;
 
 	if (argc != 1)
 		return (ft_error("No argument is allowed\n", 0, 0));
 	(void)argv;
-	sh.env = NULL;
+	sh = malloc(sizeof(t_shell));
+	if (!sh)
+		return (EXIT_FAILURE);
+	sh->env = NULL;
 	// checker();
-	sh.env = init_env_list(envp);
-	if (shell_init(&sh) == 0)
+	sh->env = init_env_list(envp);
+	if (shell_init(sh) == 0)
 	{
-		sh.loop = 0;
-		while (sh.loop == 0)
+		sh->loop = 0;
+		while (sh->loop == 0)
 		{
-			sh.command = readline("minishell efficace> ");
-			if (!sh.command)
+			sh->command = readline("minishell efficace> ");
+			if (!sh->command)
 				return (ft_error("Error with shell launch", 0, 0));
 			else
-				add_history(sh.command);
-			minilaunch(&sh);
-			// ft_free(&sh);
+				add_history(sh->command);
+			minilaunch(sh);
+			ft_free(sh);
 		}
 	}
 	// free_env(&sh);

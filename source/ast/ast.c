@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:21:05 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/12 15:50:37 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/26 17:42:57 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,20 @@ char	**get_command(t_token *token)
 	char	**command;
 
 	count = 0;
-	i = -1;
-	while (token && is_command(token->t_type) == 0 && count++ <= 1000000)
+	while (token && is_command(token->t_type) == 0 && count <= 1000000)
+	{
 		token = token->next;
+		count++;
+	}
 	command = (char **)malloc(sizeof(char *) * (count + 1));
 	if (!command)
 		return (NULL);
+	i = 0;
 	while (token && is_command(token->t_type) == 0)
 	{
-		command[++i] = ft_strdup(token->content);
+		command[i] = ft_strdup(token->content);
 		token = token->next;
+		i++;
 	}
 	command[i] = NULL;
 	return (command);
@@ -68,11 +72,11 @@ t_ast	*make_ast(t_token *tokens)
 		current = current->next;
 	if (current && is_command(current->t_type) == 1 && current->t_type != PIPE
 		&& current->t_type != HEREDOC)
-		return (pipe_left(tokens)); // fonction à faire
+		return (pipe_left(tokens));
 	current = tokens;
 	if (is_command(current->t_type) == 0)
 	{
-		origin = make_ast_node(get_command(current), CMD); // fonction à faire
+		origin = make_ast_node(get_command(current), CMD);
 		while (current && is_command(current->t_type) == 0)
 			current = current->next;
 	}

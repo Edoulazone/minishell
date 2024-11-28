@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:00:29 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/12 15:54:51 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/28 14:12:13 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,6 @@
 # include <readline/history.h>
 # include <stdbool.h>
 
-/*Path vers .h de libft*/
-
-# include "../libft/libft.h"
-
 /*Error messages*/
 
 # define SYNTAX_ERROR	"minishell: syntax error near unexpected token''\n"
@@ -39,14 +35,14 @@
 
 /*Token types*/
 
-# define WORD		0
-# define INPUT		1	//"<"
-# define HEREDOC	2	//"<<"
-# define TRUNC		3	//">" //je l'appelerai plutot OUTPUT
-# define APPEND		4	//">>"
-# define PIPE		5	//"|"
-# define CMD		6	//"|"	??
-# define ARG		7	//"|"	?? ["ls", "-l", "-a", NULL]
+// # define WORD		0
+// # define INPUT		1	//"<"
+// # define HEREDOC	2	//"<<"
+// # define TRUNC		3	//">" //je l'appelerai plutot OUTPUT
+// # define APPEND		4	//">>"
+// # define PIPE		5	//"|"
+// # define CMD		6	//"|"	??
+// # define REDIR		7	//"|"
 
 /*Exit defines*/
 
@@ -54,24 +50,6 @@
 # define EXIT_FAILURE	1
 
 /*Structures*/
-
-//AST structure
-typedef struct s_ast
-{
-	char			**value;  //["ls", "-l", "-a", NULL]
-	int				n_type;
-	struct s_ast	*left;
-	struct s_ast	*right;
-}	t_ast;
-
-// //Token structure
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				t_type;
-// 	struct s_token	*prev;
-// 	struct s_token	*next;
-// }	t_token;
 
 //Environnement structure
 typedef struct s_env
@@ -82,13 +60,79 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+//Enumeration of different possible types of nodes
+enum e_char_token
+{
+	WORD,
+	INPUT,
+	HEREDOC,
+	TRUNC,
+	APPEND,
+	PIPE,
+	CMD,
+	REDIR,
+};
+
+//AST structure
+typedef struct	s_ast
+{
+	int				type;
+}	t_ast;
+
+//Node types
+typedef struct	s_cmd
+{
+	int				type;
+	char			**arg;
+	t_env			*env;
+}	t_cmd;
+
+typedef struct	s_redir
+{
+	int				type;
+	t_ast			*cmd;
+	char			*file;
+}	t_redir;
+
+typedef struct	s_pipe
+{
+	int				type;
+	t_ast			*left;
+	t_ast			*right;
+}	t_pipe;
+
+//Token structure
+typedef struct s_token
+{
+	char			*content;
+	int				t_type;
+	struct s_token	*next;
+}	t_token;
+
+//Getal structure
+typedef struct s_getal
+{
+	size_t	i;
+	size_t	j;
+	size_t	x;
+	size_t	words;
+	char	**final;
+}				t_getal;
+
+// //List structure
+// typedef struct s_list
+// {
+// 	void			*content;
+// 	int				type;
+// 	struct s_list	*next;
+// }					t_list;
+
 //Shell structure
 typedef struct s_shell
 {
 	int		loop;
 	char	*str;
 	char	*command;
-	t_list	**commands;
 	int		num_commands;
 	int		return_value;
 	char	*delimiter;
@@ -112,15 +156,28 @@ int		shell_init(t_shell *sh);
 /*************************************
 *				UTILS                *
 *************************************/
-// utils.c
+//libft_utils.c
+void	ft_lstadd_back(t_shell *sh, t_token *new);
+t_token	*ft_lstlast(t_token *lst);
+t_token	*ft_lstnew(void *content, int type);
+size_t	ft_strlen(const char *src);
+void	ft_lstclear(t_token *lst, void (*del)(void *));
+
+//libft_utils_2.c
 char	*ft_strdup(const char *str);
+int		ft_strcmp(char *s1, char *s2);
+char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strndup(const char *str, int n);
 char	*ft_ssearch(char *str, int c, int flag);
+
+//ft_split.c
+char	**ft_split(char const *s, char c);
 
 /*************************************
 *			   EXECUTOR              *
 *************************************/
 // exec.c
+void	print_value(char **arg);
 int 	execute_ast(t_ast *node, t_env **env, t_shell *sh);
 int 	is_built_in(t_ast *cmd, t_env **env, t_shell *sh);
 
@@ -132,12 +189,18 @@ void    add_path(t_ast *cmd, t_env *env);
 *				LEXER                *
 *************************************/
 // lexer.c
-int		lex(t_shell *sh);
+int		lex(char *str, t_shell *sh);
 
 // lexer_utils.c
 void	check_qs(int sqs, int dqs, t_token *tokens);
 void	new_qs(char c, int *sqs, int *dqs);
 int		is_meta(char c, int *sqs, int *dqs);
+
+// trimmer.c
+void	t_trimmer(t_token *tokens, t_shell *sh);
+
+// verif_lex.c
+int		verif_lex(t_shell *sh, t_token *token);
 
 /*************************************
 *				PARSER               *
@@ -145,6 +208,18 @@ int		is_meta(char c, int *sqs, int *dqs);
 // parsing.c
 int		parsing(t_shell *sh);
 int		is_command(int type);
+void	ast_printer(t_ast *node, int level);
+
+//mult_tokens.c
+int		verif_tokens(t_shell *sh, t_token *token);
+
+/*************************************
+*				 FREE                *
+*************************************/
+//free.c
+void	free_ast(t_ast *node);
+void    free_token(t_token *token);
+void    ft_free(t_shell *sh);
 
 /*************************************
 *				 AST                 *
@@ -204,7 +279,6 @@ void	update_content(t_env *node, char *new_var, int sign);
 void	sort_array(char **array);
 void	fill_env_array(char **array, t_env *env);
 char    **env_to_array(t_env *env);
-void	print_export(t_env *env);
 
 //EXPORT UTILS
 int		exp_strcmp(char *s1, char *s2);
@@ -242,5 +316,11 @@ void    handle_trunc_append(t_ast *node, t_env **env, t_shell *sh);
 //EXEC
 int 	is_built_in(t_ast *cmd, t_env **env, t_shell *sh);
 int 	execute_ast(t_ast *node, t_env **env, t_shell *sh);
+
+//print's du debugging
+void	print_simple_ast(t_ast *root);
+void	print_export(t_env *env);
+void    print_full_command(t_ast *node);
+void	print_value(char **arg);
 
 #endif

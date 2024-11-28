@@ -6,11 +6,34 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 14:45:40 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/11/05 16:40:08 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/11/20 22:40:38 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void    print_full_command(t_ast *node)
+{
+    int     i;
+	int		j;
+    char	**arg;	
+
+	arg = node->value;
+    i = 0;
+    while (arg[i])
+	{
+		j = 0;
+		write(1, "\"", 1);
+		while (arg[i][j])
+		{
+			write(1, arg[i] + j, 1);
+			j++;
+		}
+		write(1, "\", ", 3);
+		i++;
+	}
+	write(1, "\n", 1);
+}
 
 void    add_path(t_ast *cmd, t_env *env)
 {
@@ -47,14 +70,20 @@ int execute_command(t_ast *cmd, t_env *env, t_shell *sh)
 
     add_path(cmd, env);
     (void)sh;
+	// print debugging
+	//write(2, "node->value, so full command to be execve: ", 43);
+	//print_full_command(cmd);
+	//print_value(cmd->value);
     env_array = env_to_array(env);
     fill_env_array(env_array, env);
+	//write(2, "\n2e CHECK de l'exec\n", 20);
 	if (-1 == execve(cmd->value[0], cmd->value, env_array))
 	{
 		free_split(env_array);
 		perror("execve failed !\n"); //surement pas que ca à faire
 		exit(EXIT_FAILURE);
 	} //return status/value ???
+	exit(EXIT_SUCCESS); //p e du yaourt cette ligne
     return (EXIT_FAILURE);
 }
 

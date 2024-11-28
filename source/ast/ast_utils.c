@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:51:47 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/05 14:47:07 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/20 12:26:23 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_ast	*pipe_left(t_token *tokens)
 	current = tokens;
 	while (current && current->t_type != PIPE && current->t_type != HEREDOC)
 	{
-		if (is_command(current->t_type) == 1 && current->t_type != PIPE)
+		if (is_command(current->t_type) == 1)
 		{
 			new_node = make_ast_node(NULL, current->t_type);
 			new_node->left = origin;
@@ -54,7 +54,7 @@ t_ast	*heredoc_left(t_token *tokens)
 	current = tokens;
 	while (current && current->t_type != HEREDOC)
 	{
-		if (is_command(current->t_type) == 1 && current->t_type != HEREDOC)
+		if (is_command(current->t_type) == 1)
 		{
 			new_node = make_ast_node(NULL, current->t_type);
 			new_node->left = origin;
