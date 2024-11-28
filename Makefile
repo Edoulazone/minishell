@@ -6,7 +6,7 @@
 #    By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 14:59:57 by eschmitz          #+#    #+#              #
-#    Updated: 2024/11/04 16:59:21 by eschmitz         ###   ########.fr        #
+#    Updated: 2024/11/27 17:17:59 by eschmitz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,46 +14,46 @@
 
 NAME	= minishell
 CC		= cc
-CFLAGS	= -Wall -Werror -Wextra
+CFLAGS	= -Wall -Werror -Wextra -g3 #-fsanitize=address
 RM		= rm -rf
 
 # Libraries
 
-MINISHELL_DIR	=	./includes/minishell.h
-LIBFT_DIR		=	lib/libft
-LIBFT			=	$(LIBFT_DIR)/libft.a
+MINISHELL_DIR	=	./includes/
 READLINE_DIR	=	$(HOME)/.brew/opt/readline
 READLINE_LIB	=	-L$(READLINE_DIR)/lib -lreadline
 
 # Include directories
 
-CFLAGS			+=	-I$(dir $(MINISHELL_DIR))
-INC_DIRS		=	include source $(LIBFT_DIR)/include $(READLINE_DIR)/include $(MINISHELL_DIR)
+INC_DIRS		=	include source /include $(READLINE_DIR)/include $(MINISHELL_DIR)
 CFLAGS			+=	$(addprefix -I, $(INC_DIRS))
-LDFLAGS			=	-L$(LIBFT_DIR) -lft $(READLINE_LIB)
+LDFLAGS			=	$(READLINE_LIB)
 
 # Source files
 
 VPATH	= source source/ast source/built_ins source/checker source/executor \
-			source/main source/parser source/utils
+			source/main source/parser source/utils source/lexer source/free
 
 SRC_MAIN	= main.c shell_init.c
-SRC_UTILS	= utils.c
-SRC_PARSING	= parsing.c
+SRC_UTILS	= libft_utils.c libft_utils_2.c ft_split.c
+SRC_PARSING	= parsing.c mult_tokens.c
 SRC_AST		= ast.c ast_utils.c
 SRC_BUILT_INS	= cd.c echo.c env.c export.c export_utils.c path.c pwd.c \
 					b_utils.c export_print.c unset.c
 SRC_CHECKER	= check.c errors.c
-SRC_EXECUTOR	= exec_cmd.c exec.c
+SRC_LEXER	= lexer.c lexer_utils.c trimmer.c verif_lex.c
+SRC_EXECUTOR	= exec_cmd.c exec.c exec_heredoc.c exec_pipe.c exec_input.c \
+					exec_trunc_append.c
+SRC_FREE	= free.c
 
 SRC	= $(SRC_MAIN) $(SRC_UTILS) $(SRC_PARSING) $(SRC_AST) $(SRC_BUILT_INS) \
-		$(SRC_CHECKER) $(SRC_EXECUTOR)
+		$(SRC_CHECKER) $(SRC_EXECUTOR) $(SRC_LEXER) $(SRC_FREE)
 
 # Object files
 
-OBJ		= $(SRC:%.c=build/%.o)
+OBJ		= $(SRC:%.c=objects/%.o)
 DEP		= $(OBJ:%.o=%.d)
-OBJ_PATH = build
+OBJ_PATH = objects
 
 # Rules
 
@@ -62,11 +62,11 @@ all: $(NAME)
 $(OBJ_PATH):
 	@mkdir -p $(OBJ_PATH)
 
-build/%.o:	%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+objects/%.o:	%.c
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-$(NAME): $(OBJ_PATH) $(OBJ) 
-	@$(CC) $(CFLAGS) $(OBJ) -o $@
+$(NAME): $(OBJ_PATH) $(OBJ)
+	@$(CC) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $@
 	@echo "\033[31m              __          __          __                __ __   "
 	@echo "\033[32m             |  \        |  \        |  \              |  \  \  "
 	@echo "\033[33m ______ ____  \▓▓_______  \▓▓ _______| ▓▓____   ______ | ▓▓ ▓▓  "
@@ -79,7 +79,7 @@ $(NAME): $(OBJ_PATH) $(OBJ)
 	@echo "\n                                                                      "
 
 clean:
-	@$(RM) ./objects
+	@$(RM) objects
 	@echo "\nYour program got cleaned successfully\n"
 	@if [ -f traces.txt ]; then $(RM) traces.txt; fi
 	@if [ -f 0 ]; then $(RM) 0; fi
