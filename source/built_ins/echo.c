@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:24:11 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/28 15:11:30 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/12/02 13:46:22 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,15 @@ bool	option_new_line(char **args, int *p)
 	return (result);
 }
 
-void	ft_echo(t_ast *cmd)
+void	ft_echo(t_cmd *node)
 {
 	bool	new_line;
 	int		i;
 	char	**args;
 
 	i = 1;
-	new_line = option_new_line(cmd->value, &i);
-	args = cmd->value;
+	new_line = option_new_line(node->arg, &i);
+	args = node->arg;
 	while (args[i])
 	{
 		write(1, args[i], ft_strlen(args[i]));

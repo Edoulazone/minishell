@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 17:53:52 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/28 14:05:35 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/09 14:56:07 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,24 +59,23 @@ void	t_type(t_token *token)
 {
 	while (token)
 	{
-		// printf("token content: %s\n", token->content);
 		if (!ft_strcmp(token->content, "|"))
 			token->t_type = PIPE;
-		else if (!ft_strcmp(token->content, "<"))
-			token->t_type = INPUT;
-		else if (!ft_strcmp(token->content, ">"))
-			token->t_type = TRUNC;
 		else if (!ft_strcmp(token->content, ">>"))
 			token->t_type = APPEND;
 		else if (!ft_strcmp(token->content, "<<"))
 			token->t_type = HEREDOC;
+		else if (!ft_strcmp(token->content, "<"))
+			token->t_type = INPUT;
+		else if (!ft_strcmp(token->content, ">"))
+			token->t_type = TRUNC;
 		else
-			token->t_type = CMD;
+			token->t_type = WORD;
 		token = token->next;
-	}	
+	}
 }
 
-int	lex(char *str, t_shell *sh)
+int	lex(char *str, t_token **token, t_shell *sh)
 {
 	int	i;
 	int	single_quote_s;
@@ -88,16 +87,16 @@ int	lex(char *str, t_shell *sh)
 	while (str && str[i])
 	{
 		if (!is_meta(str[i], &single_quote_s, &double_quote_s))
-			ft_lstadd_back(sh, ft_lstnew(get_token(&str[i], &i,
-				&single_quote_s, &double_quote_s), CMD));
+			ft_lstadd_back(token, ft_lstnew(get_token(&str[i], &i,
+				&single_quote_s, &double_quote_s), WORD));
 		else if (is_meta(str[i], &single_quote_s, &double_quote_s) == 1)
-			ft_lstadd_back(sh, ft_lstnew(get_meta_token(&str[i], &i), CMD));
+			ft_lstadd_back(token,
+				ft_lstnew(get_meta_token(&str[i], &i), WORD));
 		i++;
 	}
-	check_qs(single_quote_s, double_quote_s, sh->token);
-	t_type(sh->token);
-	if (verif_lex(sh, sh->token))
+	check_qs(single_quote_s, double_quote_s, token);
+	t_type(*token);
+	if (verif_lex(sh))
 		return (1);
-	t_trimmer(sh->token, sh);
 	return (0);
 }

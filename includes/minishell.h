@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:00:29 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/28 14:12:13 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/10 19:04:40 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,27 +119,32 @@ typedef struct s_getal
 	char	**final;
 }				t_getal;
 
-// //List structure
-// typedef struct s_list
-// {
-// 	void			*content;
-// 	int				type;
-// 	struct s_list	*next;
-// }					t_list;
+//Expander environment structure
+typedef struct	s_env_exp
+{
+	int		end;
+	int		sub;
+	int		start;
+	int		var_len;
+	char	*var;
+	char	*expand;
+}	t_env_exp;
 
 //Shell structure
 typedef struct s_shell
 {
-	int		loop;
-	char	*str;
-	char	*command;
-	int		num_commands;
-	int		return_value;
-	char	*delimiter;
-	int		exit_status; //jai changé en int*
-	t_env	*env;
-	t_token	*token;
-	t_ast	*ast;
+	int			loop;
+	char		*str;
+	char		*command;
+	int			num_commands;
+	int			return_value;
+	char		*delimiter;
+	int			exit_status; //jai changé en int*
+	t_env		*env;
+	t_token		*expander;
+	t_token		*token;
+	t_ast		*ast;
+	t_env_exp	*env_exp;
 }	t_shell;
 
 /*FONCTIONS*/
@@ -157,11 +162,11 @@ int		shell_init(t_shell *sh);
 *				UTILS                *
 *************************************/
 //libft_utils.c
-void	ft_lstadd_back(t_shell *sh, t_token *new);
+void	ft_lstadd_back(t_token **token, t_token *new);
 t_token	*ft_lstlast(t_token *lst);
 t_token	*ft_lstnew(void *content, int type);
 size_t	ft_strlen(const char *src);
-void	ft_lstclear(t_token *lst, void (*del)(void *));
+void	ft_lstclear(t_token **lst, void (*del)(void *));
 
 //libft_utils_2.c
 char	*ft_strdup(const char *str);
@@ -170,79 +175,127 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strndup(const char *str, int n);
 char	*ft_ssearch(char *str, int c, int flag);
 
+//libft_utils_3.c
+char	*ft_itoa(int n);
+size_t	ft_strlcpy(char *dest, const char *src, size_t dstsize);
+char	*ft_strchr(const char *s, int c);
+void	ft_putstr_fd(char *s, int fd);
+
 //ft_split.c
 char	**ft_split(char const *s, char c);
 
-/*************************************
-*			   EXECUTOR              *
-*************************************/
-// exec.c
-void	print_value(char **arg);
-int 	execute_ast(t_ast *node, t_env **env, t_shell *sh);
-int 	is_built_in(t_ast *cmd, t_env **env, t_shell *sh);
-
-// exec_cmd.c
-int 	execute_command(t_ast *cmd, t_env *env, t_shell *sh);
-void    add_path(t_ast *cmd, t_env *env);
+//utils.c
+int		countheredocs(t_token *token);
+int		ft_lstsize(t_token *lst);
+int		is_quote(char c);
+int		ft_isdigit(int c);
+void	list_append(t_token *token, char *content, int type);
 
 /*************************************
 *				LEXER                *
 *************************************/
 // lexer.c
-int		lex(char *str, t_shell *sh);
+int		lex(char *str, t_token **token, t_shell *sh);
 
 // lexer_utils.c
-void	check_qs(int sqs, int dqs, t_token *tokens);
+void	check_qs(int sqs, int dqs, t_token **tokens);
 void	new_qs(char c, int *sqs, int *dqs);
 int		is_meta(char c, int *sqs, int *dqs);
 
 // trimmer.c
-void	t_trimmer(t_token *tokens, t_shell *sh);
+void	trim_and_expand(t_token *tokens, t_shell *sh);
 
 // verif_lex.c
-int		verif_lex(t_shell *sh, t_token *token);
+int		verif_lex(t_shell *sh);
+
+/*************************************
+*		       EXPANDER              *
+*************************************/
+// expander.c
+int		expander(t_shell *sh, t_token **expander);
+
+// expand_heredoc.c
+char	*expand_heredoc(char *str);
+
+// expand_quotes.c
+char	*expand_sq(char *copy, char *str, int *i);
+char	*expand_dq(t_shell *sh, char *copy, char *str, int *i);
+
+// expander_utils.c
+char		*ft_substr(char const *s, unsigned int start, size_t len);
+t_env_exp	*init_var_exp(void);
+t_token		*init_token(void);
+int			ft_strncmp(const char *s1, const char *s2, size_t n);
+t_env		*get_node(t_env *env, char *var);
+
+// expander_utils2.c
+void	check_node_null(t_shell *sh);
+char	*ft_realloc(char *ptr, size_t new_size);
+
+// get_word.c
+char	*get_word(t_shell *sh, char *str);
+char	*join_char(char *str, char c);
+
+// env_var.c
+char	*exp_env_var(t_shell *sh, char *copy, char *str, int *i);
 
 /*************************************
 *				PARSER               *
 *************************************/
-// parsing.c
-int		parsing(t_shell *sh);
-int		is_command(int type);
+// pars.c
+t_ast	*parser(t_token **token, t_env *env, int *heredocs, t_shell *sh);
+int		ft_lstfind(t_token *token, int type);
 void	ast_printer(t_ast *node, int level);
 
-//mult_tokens.c
-int		verif_tokens(t_shell *sh, t_token *token);
+//cmd_parser.c
+t_ast	*cmd_node(char **arg, t_env *env, t_token **token);
+char	**get_arg(t_token *token);
+
+//pipe_parser.c
+t_token	*get_next_pipe(t_token *token, t_shell *sh);
+t_token	*get_previous_pipe(t_token *token);
+t_ast	*pipe_node(t_ast *left, t_ast *right, t_token **token);
+
+//redir_parser.c
+char 	*get_file_type(t_token *token, int *type, int *hd_index);
+int		token_is_redir(t_token *token);
+t_ast	*redir_node(char *file, t_ast *cmd, int type, t_token **token);
+t_token	*get_previous_redir(t_token *token);
 
 /*************************************
 *				 FREE                *
 *************************************/
 //free.c
-void	free_ast(t_ast *node);
 void    free_token(t_token *token);
 void    ft_free(t_shell *sh);
 
-/*************************************
-*				 AST                 *
-*************************************/
-// ast.c
-t_ast	*make_ast(t_token *tokens);
-t_ast	*make_ast_node(char	**value, int type);
-char	**get_command(t_token *token);
+//free_ast.c
+void	free_ast(t_ast *node);
 
-// ast_utils.c
-t_ast	*ast_priority(t_token *tokens, t_ast *origin);
-t_ast	*pipe_left(t_token *tokens);
+// /*************************************
+// *				 AST                 *
+// *************************************/
+// // ast.c
+// t_ast	*make_ast(t_token *tokens);
+// t_ast	*make_ast_node(char	**value, int type);
+// char	**get_command(t_token *token);
+
+// // ast_utils.c
+// t_ast	*ast_priority(t_token *tokens, t_ast *origin);
+// t_ast	*pipe_left(t_token *tokens);
 
 /*************************************
 *			   CHECKER               *
 *************************************/
+//errors.c
 int		ft_error(char *str, int n, char var);
+void	error(char *str);
 
 /*************************************
 *	  \/      BUILT_INS      \/      *
 *************************************/
 //EXEC echo
-void	ft_echo(t_ast *cmd);
+void	ft_echo(t_cmd *cmd);
 bool 	only_n(char *str);
 bool	option_new_line(char **args, int *p);
 
@@ -261,17 +314,17 @@ char	*find_home(t_env *env);
 char	*find_paths(t_env *env);
 
 //CD
-void	ft_cd(t_ast *cmd, t_env *env);
+void	ft_cd(t_cmd *cmd, t_env *env);
 
 //UNSET
 int		special_strcmp(char *env_str, char *check, char c);
-int		ft_unset(t_ast *cmd, t_env **env);
+int		ft_unset(t_cmd *cmd, t_env **env);
 void	remove_env_node(t_env **head, char *check, t_env **save);
 
 //EXPORT
 int		valid_arg(char *var);
 t_env	*env_var_exists(char *var, t_env *env);
-void	ft_export(t_ast *cmd, t_env **env);
+void	ft_export(t_cmd *cmd, t_env **env);
 void	append_node(char *var, t_env *env, int sign);
 void	update_content(t_env *node, char *new_var, int sign);
 
@@ -293,34 +346,42 @@ char	*safe_strjoin(char *s1, char *s2);
 /*************************************
 *		\/	  EXECUTOR     \/        *
 *************************************/
+// exec.c
+void	pre_ast(t_ast *node, t_env **env, t_shell *sh);
+int 	execute_ast(t_ast *node, t_env **env, t_shell *sh);
+int 	is_built_in(t_cmd *cmd, t_env **env, t_shell *sh);
 
 //EXEC_CMD
-int 	execute_command(t_ast *cmd, t_env *env, t_shell *sh);
-void    add_path(t_ast *cmd, t_env *env);
-void    handle_cmd(t_ast *node, t_env **env, t_shell *sh);
+int 	execute_command(t_cmd *cmd, t_env *env, t_shell *sh);
+void    add_path(t_cmd *cmd, t_env *env);
+//void    handle_cmd(t_cmd *node, t_env **env, t_shell *sh); //obsolete
 
 //EXEC_HEREDOC
-void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh);
+void	handle_heredoc(t_redir *node, t_env **env, t_shell *sh);
 
 //EXEC_PIPE
-void	decoupage_left_pipe(int *pipe_fd, t_ast *node, t_env **env, t_shell *sh);
-void	decoupage_right_pipe(int *pipe_fd, t_ast *node, t_env **env, t_shell *sh);
-void    handle_pipe(t_ast *node, t_env **env, t_shell *sh);
+void	decoupage_left_pipe(int *pipe_fd, t_pipe *node, t_env **env, t_shell *sh);
+void	decoupage_right_pipe(int *pipe_fd, t_pipe *node, t_env **env, t_shell *sh);
+void    handle_pipe(t_pipe *node, t_env **env, t_shell *sh);
 
 //EXEC_INPUT
-void    handle_input(t_ast *node, t_env **env, t_shell *sh);
+void    handle_input(t_redir *node, t_env **env, t_shell *sh);
 
 //EXEC_TRUNC_APPEND
-void    handle_trunc_append(t_ast *node, t_env **env, t_shell *sh);
-
-//EXEC
-int 	is_built_in(t_ast *cmd, t_env **env, t_shell *sh);
-int 	execute_ast(t_ast *node, t_env **env, t_shell *sh);
+void    handle_trunc_append(t_redir *node, t_env **env, t_shell *sh);
 
 //print's du debugging
 void	print_simple_ast(t_ast *root);
 void	print_export(t_env *env);
-void    print_full_command(t_ast *node);
+void    print_full_command(t_cmd *node);
 void	print_value(char **arg);
+
+//HARDCODE TESTING
+t_ast *hard_ast1(t_shell *sh);
+t_ast *hard_ast2(t_shell *sh);
+t_ast *hard_ast3(t_shell *sh);
+t_ast *hard_ast4(t_shell *sh);
+t_ast *hard_ast5(t_shell *sh);
+t_ast *hard_ast6(t_shell *sh);
 
 #endif

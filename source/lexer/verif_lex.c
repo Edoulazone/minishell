@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 09:30:01 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/27 10:19:39 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/04 14:13:01 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,30 +22,29 @@ int	error_lex(char *str, char *t_content)
 	return (1);
 }
 
-int	verif_lex(t_shell *sh, t_token *token)
+int	verif_lex(t_shell *sh)
 {
-	if (token && token->t_type == PIPE)
+	t_token	*temp;
+
+	temp = sh->token;
+	if (temp && temp->t_type == PIPE)
 		return (sh->exit_status = 258,
 			error_lex("bash: syntax error near unexpected token",
-				token->content));
-	while (token)
+				temp->content));
+	while (temp)
 	{
-		if (token->t_type >= INPUT && token->t_type <= APPEND)
+		if (temp->t_type >= INPUT && temp->t_type <= APPEND)
 		{
-			if (!token->next)
-			{
-				sh->exit_status = 258;
-				return (error_lex("bash: syntax error near unexpected token",
-						"newline"));
-			}
-			if (token->next->t_type != WORD)
-			{
-				sh->exit_status = 258;
-				return (error_lex("bash: syntax error near unexpected token",
-						token->next->content));
-			}
+			if (!temp->next)
+				return (sh->exit_status = 258,
+					error_lex("bash: syntax error near unexpected token",
+					"newline"));
+			if (temp->next->t_type != WORD)
+				return (sh->exit_status = 258,
+						error_lex("bash: syntax error near unexpected token",
+						temp->next->content));
 		}
-		token = token->next;
+		temp = temp->next;
 	}
 	return (0);
 }

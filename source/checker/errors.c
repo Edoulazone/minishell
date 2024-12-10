@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:48:01 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/10/08 17:51:57 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/11/28 14:53:15 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,12 @@ int	ft_error(char *str, int n, char var)
 				write(1, &var, 1);
 		write(1, &str[i], 1);
 	}
-	return (1);
+	return (EXIT_FAILURE);
+}
+
+void	error(char *str)
+{
+	write(2, str, ft_strlen(str));
+	write(2, "\n", 1);
+	//exit(1);
 }

@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 17:54:02 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/11/26 14:52:31 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/04 17:13:50 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 	pas pour des commandes tel que: `cat <<eof | cat`
 */
 
-void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh)
+/*
+void	handle_heredoc(t_redir *node, t_env **env, t_shell *sh)
 {
 	pid_t	pid;
 	char	*line;
@@ -33,7 +34,7 @@ void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh)
 	while (1)
 	{
 		line = readline("heredoc> ");
-		if (!line || ft_strcmp(node->right->value[0], line) == 0)
+		if (!line || ft_strcmp(node->file, line) == 0)
 		{
 			free(line);
 			break;
@@ -50,7 +51,7 @@ void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh)
 	{
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close(pipe_fd[0]);
-		execute_ast(node->left, env, sh);
+		execute_ast(node->cmd, env, sh);
 	}
 	else
 	{
@@ -58,3 +59,4 @@ void	handle_heredoc(t_ast *node, t_env **env, t_shell *sh)
 		waitpid(pid, &sh->exit_status, 0);
 	}
 }
+*/

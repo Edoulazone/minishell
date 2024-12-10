@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 14:50:05 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/15 18:50:46 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/10 18:34:58 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,34 +36,34 @@ t_token	*ft_lstlast(t_token *lst)
 	return (NULL);
 }
 
-void	ft_lstadd_back(t_shell *sh, t_token *new)
+void	ft_lstadd_back(t_token **token, t_token *new)
 {
-	if (!new)
+	if (!new || !token)
 		return ;
-	if ((sh->token) == NULL)
+	if ((*token) == NULL)
 	{
-		sh->token = new;
+		*token = new;
 		return ;
 	}
-	ft_lstlast(sh->token)->next = new;
+	ft_lstlast(*token)->next = new;
 }
 
-void	ft_lstclear(t_token *lst, void (*del)(void *))
+void	ft_lstclear(t_token **lst, void (*del)(void *))
 {
-	t_token	*ptr1;
-	t_token	*ptr2;
+	t_token	*temp;
 
-	if (!lst || !del || !lst)
-		return ;
-	ptr1 = lst;
-	while (ptr1 != NULL)
+	if (*lst)
 	{
-		ptr2 = ptr1->next;
-		del(ptr1->content);
-		free(ptr1);
-		ptr1 = ptr2;
+		while ((*lst)->next)
+		{
+			temp = *lst;
+			del((*lst)->content);
+			(*lst) = (*lst)->next;
+			free(temp);
+			temp = NULL;
+		}
 	}
-	lst = NULL;
+	return ;
 }
 
 size_t	ft_strlen(const char *src)

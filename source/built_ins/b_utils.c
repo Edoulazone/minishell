@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:25:17 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/11/04 12:07:32 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/10 15:59:37 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	*safe_malloc(unsigned int size)
 	result = malloc(size);
 	if (!result)
 	{
-		//p-e free t_shell etc.
 		write(1, "Malloc failed !, Exiting program\n", 33);
 		exit(EXIT_FAILURE);
 	}

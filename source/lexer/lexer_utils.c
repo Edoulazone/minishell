@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 17:57:51 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/11/12 15:54:10 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/02 16:19:02 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	is_meta(char c, int *sqs, int *dqs)
 	return (0);
 }
 
-void	check_qs(int sqs, int dqs, t_token *tokens)
+void	check_qs(int sqs, int dqs, t_token **tokens)
 {
 	if (sqs || dqs)
 	{

@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 17:59:37 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/10/24 16:24:24 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/12/02 13:49:25 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,14 +97,14 @@ void	update_content(t_env *node, char *new_var, int sign)
 
 // 1: sans arguments, 2: variable existente (= overwrite),
 // 3: nouvelle env variable, 4: invalid argument (genre sans =, ou rien devant/ap res =)
-void	ft_export(t_ast *cmd, t_env **env)
+void	ft_export(t_cmd *node, t_env **env)
 {
 	char	**args;
 	int		i;
 	int		spot_equal_sign; //endroit ou ya le '=' dans args[i]
 
-	args = cmd->value;
-	if (!(cmd->value)[1])
+	args = node->arg;
+	if (!args[1])
 		return(print_export(*env));
 	i = 1;
 	while (args[i])

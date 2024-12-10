@@ -6,7 +6,7 @@
 /*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 17:59:51 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/11/07 16:46:42 by gnyssens         ###   ########.fr       */
+/*   Updated: 2024/12/02 13:50:34 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	remove_env_node(t_env **head, char *check, t_env **first)
 	write(1, "now it should have been removed !\n", 34);
 }
 
-int	ft_unset(t_ast *cmd, t_env **env)
+int	ft_unset(t_cmd *node, t_env **env)
 {
 	t_env	*first;
 	t_env	*current;
@@ -70,7 +70,7 @@ int	ft_unset(t_ast *cmd, t_env **env)
 	int		i;
 
 	first = *env;
-	args = cmd->value;
+	args = node->arg;
 	if (!(args[1]))
 		return(write(1, "no arguments for unset !\n", 25), 1); //1 means failure, for now
 	i = 1;
