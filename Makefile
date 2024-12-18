@@ -6,22 +6,24 @@
 #    By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 14:59:57 by eschmitz          #+#    #+#              #
-#    Updated: 2024/12/10 16:34:00 by eschmitz         ###   ########.fr        #
+#    Updated: 2024/12/18 16:12:24 by eschmitz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 # Compiler and flags
 
 NAME	= minishell
 CC		= cc
-CFLAGS	= -Wall -Werror -Wextra #-g3 -fsanitize=address
+CFLAGS	= -Wall -Werror -Wextra -g3 -fsanitize=address
 RM		= rm -rf
 
 # Libraries
 
 MINISHELL_DIR	=	./includes/
 READLINE_DIR	=	$(HOME)/.brew/opt/readline
-READLINE_LIB	=	-L$(READLINE_DIR)/lib -lreadline
+#READLINE_DIR = $(HOME)/local
+READLINE_LIB = -L$(READLINE_DIR)/lib -lreadline -lhistory
 
 # Include directories
 
@@ -33,24 +35,26 @@ LDFLAGS			=	$(READLINE_LIB)
 
 VPATH	= source source/ast source/built_ins source/checker source/executor \
 			source/main source/parsing source/utils source/lexer source/free \
-			source/expander
+			source/expander source/signals
 
-SRC_MAIN	= main.c shell_init.c
-SRC_UTILS	= libft_utils.c libft_utils_2.c ft_split.c utils.c libft_utils_3.c
-SRC_PARSING	= cmd_parser.c pars.c pipe_parser.c redir_parser.c
+SRC_MAIN	= main.c shell_init.c 
+SRC_UTILS	= libft_utils.c libft_utils_2.c ft_split.c utils.c libft_utils_3.c \
+				utils2.c
+SRC_PARSING	= cmd_parser.c pars.c pipe_parser.c redir_parser.c redir_parser2.c
 SRC_BUILT_INS	= cd.c echo.c env.c export.c export_utils.c path.c pwd.c \
-					b_utils.c export_print.c unset.c
+					b_utils.c export_print.c export_print2.c unset.c exit.c
 SRC_CHECKER	= check.c errors.c
-SRC_LEXER	= lexer.c lexer_utils.c trimmer.c verif_lex.c
+SRC_LEXER	= lexer.c lexer_utils.c verif_lex.c
 SRC_EXPANDER	= expander.c env_var.c expand_heredoc.c expand_quotes.c \
-					expander_utils.c expander_utils2.c get_word.c
-SRC_EXECUTOR	= exec_cmd.c exec.c exec_heredoc.c exec_pipe.c exec_input.c \
+					expander_utils.c expander_utils2.c get_words.c
+SRC_EXECUTOR	= exec_cmd.c exec.c exec_pipe.c exec_input.c \
 					exec_trunc_append.c
 SRC_FREE	= free.c free_ast.c
+SRC_SIGNAL = signals.c
 
 SRC	= $(SRC_MAIN) $(SRC_UTILS) $(SRC_PARSING) $(SRC_BUILT_INS) \
 		$(SRC_CHECKER) $(SRC_EXECUTOR) $(SRC_LEXER) $(SRC_FREE) \
-		$(SRC_EXPANDER)
+		$(SRC_EXPANDER) $(SRC_SIGNAL)
 
 # Object files
 
