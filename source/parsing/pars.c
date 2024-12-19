@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 09:24:35 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/12/12 16:49:44 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:44:49 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,11 @@ int	ft_lstfind(t_token *token, int type)
 	return (0);
 }
 
+void	pipe_error(void)
+{
+	my_write(2, "minishell: syntax error: unexpected end of file\n", 3);
+}
+
 t_ast	*parser(t_token **token, t_env *env, int *heredocs, t_shell *sh)
 {
 	int		type;
@@ -47,8 +52,8 @@ t_ast	*parser(t_token **token, t_env *env, int *heredocs, t_shell *sh)
 	{
 		prev = get_previous_pipe(*token);
 		next = get_next_pipe(*token, prev);
-		if (!prev)
-			return (pipe_node(NULL, NULL));
+		if (!prev || !next)
+			return (pipe_error(), pipe_node(NULL, NULL));
 		return (pipe_node(parser(&prev, env, heredocs, sh),
 				parser(&next, env, heredocs, sh)));
 	}

@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 13:44:42 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/12/17 12:48:54 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:56:20 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@ void	heredoc_token(t_shell *sh, t_token *token, char *str)
 {
 	ft_lstadd_back(&sh->expander, ft_lstnew(str, token->t_type));
 	token = token->next;
-	str = expand_heredoc(token->content);
-	ft_lstadd_back(&sh->expander, ft_lstnew(str, token->t_type));
+	if (token)
+	{
+		str = expand_heredoc(token->content);
+		ft_lstadd_back(&sh->expander, ft_lstnew(str, token->t_type));
+	}
 }
 
 static void	normal_token(t_shell *sh, t_token *token)
@@ -50,7 +53,8 @@ static void	dispatcher(t_shell *sh, t_token **expander)
 		else if (token->t_type == HEREDOC)
 		{
 			heredoc_token(sh, token, str);
-			token = token->next;
+			if (token->next)
+				token = token->next;
 		}
 		else
 			normal_token(sh, token);

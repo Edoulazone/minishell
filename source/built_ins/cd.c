@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 14:28:41 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/12/18 16:49:10 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:45:20 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ void	my_write(int fd, char *str, int flag)
 	write(fd, str, ft_strlen(str));
 	if (flag == 1 || flag == 2)
 		g_exit_status = 1;
+	if (flag == 3)
+		g_exit_status = 258;
 }
 
 void	write_plus_newline(int fd, char *str)

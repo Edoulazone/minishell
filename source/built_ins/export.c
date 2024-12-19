@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gnyssens <gnyssens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 17:59:37 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/12/18 14:30:47 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:50:43 by gnyssens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	valid_arg(char *var)
 			|| (*var >= 'a' && *var <= 'z')))
 		return (-1);
 	i = -1;
-	while (var[++i])
+	while (var[++i] && var[i] != '=')
 	{
 		if ((var[i] < '0' && var[i] != '+')
 			|| (var[i] > '9' && var[i] < 'A' && var[i] != '=')

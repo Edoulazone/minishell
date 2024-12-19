@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:00:29 by eschmitz          #+#    #+#             */
-/*   Updated: 2024/12/18 14:55:36 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/19 13:18:44 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ int			token_is_redir(t_token *token);
 t_ast		*redir_node(char *file, t_ast *cmd, int type);
 t_token		*get_previous_redir(t_token *token);
 
-// redir_parser2.∫c
+// redir_parser2.c
 int			ft_strcmp2(char *str, char *str_to_find);
 int			ft_cmdlen(char *str);
 t_token		*ft_delheredoc(t_token **token);
@@ -264,7 +264,6 @@ void		ft_cd(t_cmd *cmd, t_env *env, char *path);
 void		my_write(int fd, char *str, int flag);
 
 //UNSET
-int			special_strcmp(char *env_str, char *check, char c);
 int			ft_unset(t_cmd *cmd, t_env **env);
 void		remove_env_node(t_env **head, char *check, t_env **save);
 
@@ -290,6 +289,7 @@ int			exp_strcmp(char *s1, char *s2);
 int			plus_exp_strcmp(char *s1, char *s2);
 
 //UTILS
+t_env		*special_create_env(void);
 char		*safe_strdup(char *str);
 void		*safe_malloc(unsigned int size);
 void		free_split(char **mem);

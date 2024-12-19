@@ -6,7 +6,7 @@
 #    By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 14:59:57 by eschmitz          #+#    #+#              #
-#    Updated: 2024/12/18 16:12:24 by eschmitz         ###   ########.fr        #
+#    Updated: 2024/12/19 13:23:08 by eschmitz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,6 @@ RM		= rm -rf
 
 MINISHELL_DIR	=	./includes/
 READLINE_DIR	=	$(HOME)/.brew/opt/readline
-#READLINE_DIR = $(HOME)/local
 READLINE_LIB = -L$(READLINE_DIR)/lib -lreadline -lhistory
 
 # Include directories

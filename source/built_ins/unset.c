@@ -6,29 +6,11 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 17:59:51 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/12/18 13:02:46 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/19 13:16:03 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	special_strcmp(char *env_str, char *check, char c)
-{
-	int	i;
-
-	i = 0;
-	while (env_str[i])
-	{
-		if (check[i] != env_str[i] && env_str[i] != c)
-			return (1);
-		if (env_str[i] == c && !check[i])
-			return (write(1, "arg trouvé !\n", 14), 0);
-		if (env_str[i] == c && check[i])
-			return (1);
-		i++;
-	}
-	return (1);
-}
 
 void	remove_env_node(t_env **head, char *check, t_env **first)
 {

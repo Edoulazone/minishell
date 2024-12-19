@@ -6,7 +6,7 @@
 /*   By: eschmitz <eschmitz@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 11:48:03 by gnyssens          #+#    #+#             */
-/*   Updated: 2024/12/18 17:39:26 by eschmitz         ###   ########.fr       */
+/*   Updated: 2024/12/19 13:16:50 by eschmitz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,6 @@ void	ctrl_slash(int signum)
 	write(2, "Quit: 3\n", 8);
 }
 
-void	testingg(int signum)
-{
-	(void)signum;
-	write(2, "ctr C was pressed\n", 18);
-}
-
 void	handle_signal(int process)
 {
 	if (!process)
@@ -58,11 +52,6 @@ void	handle_signal(int process)
 	{
 		g_exit_status = 0;
 		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-	}
-	else if (process == 3)
-	{
-		signal(SIGINT, testingg);
 		signal(SIGQUIT, SIG_IGN);
 	}
 }
