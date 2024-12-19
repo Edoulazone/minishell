@@ -79,11 +79,11 @@ void	append_node(char *var, t_env *env, int sign)
 
 void	update_content(t_env *node, char *new_var, int sign)
 {
-	if (node->content && sign != -2)
+	if (node->content && sign != -2 && length_untill_c(new_var, '='))
 		free(node->content);
 	if (sign > 0)
 		node->content = safe_strdup(new_var + sign + 1);
-	else if (sign == 0)
+	else if (sign == 0 && length_untill_c(new_var, '='))
 		node->content = NULL;
 	else if (sign == -2)
 	{
