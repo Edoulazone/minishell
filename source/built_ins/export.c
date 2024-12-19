@@ -115,7 +115,6 @@ void	ft_export(t_cmd *node, t_env **env)
 			write(2, "minishell: ", 11);
 			write(2, node->arg[1], ft_strlen(node->arg[1]));
 			my_write(2, ": not a valid identifier\n", 2);
-			break ;
 		}
 		else if (env_var_exists(args[i], *env) == NULL)
 			append_node(args[i], *env, spot_equal_sign);
