@@ -90,7 +90,7 @@ int	execute_command(t_cmd *node, t_env *env)
 	if (!get_node(env, "PATH"))
 	{
 		free_split(env_array);
-		write(2, "minishell: ", 1);
+		write(2, "minishell: ", 11);
 		write(2, node->arg[0], ft_strlen(node->arg[0]));
 		write(2, ": No such file or directory\n", 28);
 		exit(127);
